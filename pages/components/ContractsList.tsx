@@ -5,7 +5,7 @@ import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
 
 const GET_CONTRACTS = gql`
   {
-    llamaPayFactories(first: 10) {
+    llamaPayFactories(first: 50) {
       id
       count
       address
@@ -132,7 +132,7 @@ const ContractsList: React.FunctionComponent = () => {
         <p className="w-40">Payer</p>
         <p className="w-20">Payees</p>
         <p className="w-80">Total amount p/s</p>
-        <p className="w-80">Tokens</p>
+        <p className="w-80">Tokens Left</p>
       </div>
       {contracts &&
         balances &&

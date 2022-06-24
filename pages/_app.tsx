@@ -1,13 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useQuery,
-  gql,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 // TODO: make URI configurable
 const client = new ApolloClient({
