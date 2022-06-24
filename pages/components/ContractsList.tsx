@@ -34,30 +34,10 @@ type Contract = {
   };
 };
 
-// https://api.etherscan.io/api
-//    ?module=account
-//    &action=tokenbalance
-//    &contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055
-//    &address=0xe04f27eb70e025b78871a2ad7eabe85e61212761
-//    &tag=latest&apikey=YourApiKeyToken
-
-const API_KEY =
-  process.env.NEXT_PUBLIC_ETHERSCANAPI || "M2FJABY1V2USTHUEXF1HTMPYFEMW66J55P";
-const getTokenBalance = async (contractAddress: string, address: string) => {
-  return fetch(
-    `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${API_KEY}`
-  )
-    .then((res) => res.json())
-    .then((res) => res.result)
-    .catch((err) => console.log(err));
-};
-
 const ContractsList: React.FunctionComponent = () => {
   const { loading, error, data } = useQuery(GET_CONTRACTS);
   const [contracts, setContracts] = useState<[Contract]>();
   const [balances, setBalances] = useState<string[]>();
-  console.log(data);
-  //   "llamaPayFactories[0].contracts"
 
   useEffect(() => {
     if (data) {
@@ -77,18 +57,6 @@ const ContractsList: React.FunctionComponent = () => {
       getBalances();
     }
   }, [data, contracts]);
-
-  const renderContract = async (contract: Contract) => {
-    return (
-      <div className="flex py-5" key={contract.address}>
-        <div className="pr-10">Symbol: {contract.token.symbol}</div>
-        <div>Address: {shortenAddress(contract.token.address)}</div>
-      </div>
-    );
-  };
-
-  if (contracts)
-    getTokenBalance(contracts[0].token.address, contracts[0].address);
 
   return loading ? (
     <p>Loading...</p>
