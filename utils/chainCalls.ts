@@ -7,17 +7,34 @@ const ALCHEMY_API =
 
 console.log(`ALCHEMY_API: ${ALCHEMY_API}`);
 
-const provider = new providers.MulticallProvider(
-  new ethersProviders.JsonRpcProvider(ALCHEMY_API)
-);
-
 export type ERC20BalanceCall = {
   address: string;
   tokenAddress: string;
   decimals: number;
 };
 
-export const getERC20Balances = async (tokens: ERC20BalanceCall[]) => {
+const createProvider = (chainId: number) => {
+  let apiUrl;
+
+  switch (chainId) {
+    case 1:
+      apiUrl = "https://cloudflare-eth.com/";
+      break;
+    case 137:
+      apiUrl = "https://polygon-rpc.com/";
+    default:
+      break;
+  }
+  return new providers.MulticallProvider(
+    new ethersProviders.JsonRpcProvider(apiUrl)
+  );
+};
+
+export const getERC20Balances = async (
+  chainId: number,
+  tokens: ERC20BalanceCall[]
+) => {
+  const provider = createProvider(chainId);
   const contracts = tokens.map((token) => {
     return new ethers.Contract(token.tokenAddress, ERC20ABI, provider);
   });
