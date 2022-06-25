@@ -74,8 +74,7 @@ const createExplorerLink = (address: string) => {
   return `https://etherscan.io/address/${address}`;
 };
 
-const createLinkToLlamaPay = (address: string) => {
-  const chainId = 1;
+const createLinkToLlamaPay = (address: string, chainId: number = 1) => {
   return `https://llamapay.io/streams?chainId=${chainId}&address=${address}`;
 };
 
@@ -84,8 +83,11 @@ const calculateActivePayees = (contract: Contract) => {
     .length;
 };
 
+const chainIds = [1, 137];
+
 const ContractsList: React.FunctionComponent = () => {
   const { loading, error, data } = useQuery(GET_CONTRACTS);
+  const [chainId, setChainId] = useState(1);
   const [contracts, setContracts] = useState<[Contract]>();
   const [balances, setBalances] = useState<string[]>();
   const [streams, setStreams] =
@@ -110,7 +112,7 @@ const ContractsList: React.FunctionComponent = () => {
           };
         });
       const getBalances = async () => {
-        const balances = await getERC20Balances(tokens);
+        const balances = await getERC20Balances(1, tokens);
         setBalances(balances);
       };
 
