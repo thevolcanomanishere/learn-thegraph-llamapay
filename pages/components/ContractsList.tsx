@@ -123,10 +123,10 @@ const ContractsList: React.FunctionComponent = () => {
         const balances = await getERC20Balances(chainId, tokens);
         setBalances(balances);
       };
-
-      const test = getTotalAmountPerSecond(data.llamaPayFactories[0].contracts);
-      console.log(test);
-      setTotalAmountPerSecond(test);
+      const totalAmountPerSecond = getTotalAmountPerSecond(
+        data.llamaPayFactories[0].contracts
+      );
+      setTotalAmountPerSecond(totalAmountPerSecond);
 
       getBalances();
     }
