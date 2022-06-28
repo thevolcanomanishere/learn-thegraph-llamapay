@@ -1,4 +1,5 @@
 import { providers } from "@0xsequence/multicall";
+import { ChainId, ChainName } from "eth-chains";
 import { ethers, utils, providers as ethersProviders } from "ethers";
 import ERC20ABI from "../Abis/ERC20.json";
 
@@ -17,6 +18,13 @@ const createProvider = (chainId: number) => {
       break;
     case 137:
       apiUrl = "https://polygon-rpc.com/";
+      break;
+    case ChainId.AvalancheMainnet:
+      apiUrl = "https://api.avax.network/ext/bc/C/rpc";
+      break;
+    case ChainId.FantomOpera:
+      apiUrl = "https://rpc.ftm.tools";
+      break;
     default:
       break;
   }

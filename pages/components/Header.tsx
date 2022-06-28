@@ -1,5 +1,4 @@
 import React from "react";
-import CurrentNetwork from "./CurrentNetwork";
 
 const Header = () => {
   return (
@@ -7,7 +6,6 @@ const Header = () => {
       <h1 className="w-auto text-4xl font-bold text-[#39FF14] border-white border-b-2">
         Llama Pay Contracts
       </h1>
-      <CurrentNetwork/>
     </div>
   );
 };
