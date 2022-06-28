@@ -29,19 +29,22 @@ export const getERC20Balances = async (
   chainId: number,
   tokens: ERC20BalanceCall[]
 ) => {
-  console.log('here')
   const provider = createProvider(chainId);
   const contracts = tokens.map((token) => {
     return new ethers.Contract(token.tokenAddress, ERC20ABI, provider);
   });
 
-  const calls = contracts.map((contract, index) => {
-    return contract.balanceOf(tokens[index].address);
-  });
+  try {
+    const calls = contracts.map((contract, index) => {
+      return contract.balanceOf(tokens[index].address);
+    });
 
-  const results = await Promise.all(calls);
+    const results = await Promise.all(calls);
 
-  return results.map((result, index) => {
-    return utils.formatUnits(result, tokens[index].decimals);
-  });
+    return results.map((result, index) => {
+      return utils.formatUnits(result, tokens[index].decimals);
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
