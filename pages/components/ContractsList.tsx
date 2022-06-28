@@ -1,9 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
 import ChainContext, { IChainContext } from "../../utils/ChainContext";
+import { useQuery } from "urql";
+import { Chain, chains } from "eth-chains";
 
-const GET_CONTRACTS = gql`
+const GET_CONTRACTS = `
   {
     llamaPayFactories(first: 50) {
       id
@@ -69,9 +70,12 @@ const getTotalAmountPerSecond = (contracts: Contract[]) => {
   });
 };
 
-const createExplorerLink = (address: string) => {
+const createExplorerLink = (address: string, chainId: number) => {
   //TODO: check current chain ID and use correct explorer
-  return `https://etherscan.io/address/${address}`;
+  const chain = chains.getById(chainId) as Chain;
+  if (chain && chain.explorers)
+    return chain.explorers[0].url + "address/" + address;
+  return "";
 };
 
 const createLinkToLlamaPay = (address: string, chainId: number = 1) => {
@@ -83,11 +87,15 @@ const calculateActivePayees = (contract: Contract) => {
     .length;
 };
 
-const chainIds = [1, 137];
-
 const ContractsList: React.FunctionComponent = () => {
-  const { loading, error, data } = useQuery(GET_CONTRACTS);
-  const { chainId, setChainId } = React.useContext(ChainContext) as IChainContext;
+  const [result, reexecuteQuery] = useQuery({
+    query: GET_CONTRACTS,
+  });
+  const { data, fetching, error } = result;
+
+  const { chainId, setChainId } = React.useContext(
+    ChainContext
+  ) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const [balances, setBalances] = useState<string[]>();
   const [streams, setStreams] =
@@ -124,7 +132,7 @@ const ContractsList: React.FunctionComponent = () => {
     }
   }, [data, contracts, chainId]);
 
-  return loading ? (
+  return fetching ? (
     <p>Loading...</p>
   ) : (
     <div className="p-6 text-white flex-row">
@@ -142,14 +150,17 @@ const ContractsList: React.FunctionComponent = () => {
           <div className="flex" key={index}>
             <p className="w-10">{index + 1}</p>
             <a
-              href={createExplorerLink(contract.address)}
+              href={createExplorerLink(contract.address, chainId)}
               target="blank"
               className="w-40"
             >
               {shortenAddress(contract.address)}
             </a>
             <a
-              href={createLinkToLlamaPay(contract.streams[0]?.payer.address)}
+              href={createLinkToLlamaPay(
+                contract.streams[0]?.payer.address,
+                chainId
+              )}
               target="blank"
               className="w-40"
             >
