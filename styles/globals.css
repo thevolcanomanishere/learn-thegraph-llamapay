@@ -6,3 +6,6 @@ body {
   background-color: black;
 }
 
+html {
+  @apply text-white
+}
