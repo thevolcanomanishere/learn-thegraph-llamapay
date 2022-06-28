@@ -2,11 +2,6 @@ import { providers } from "@0xsequence/multicall";
 import { ethers, utils, providers as ethersProviders } from "ethers";
 import ERC20ABI from "../Abis/ERC20.json";
 
-const ALCHEMY_API =
-  process.env.NEXT_PUBLC_ALCHEMY_API || "https://cloudflare-eth.com/";
-
-console.log(`ALCHEMY_API: ${ALCHEMY_API}`);
-
 export type ERC20BalanceCall = {
   address: string;
   tokenAddress: string;
@@ -34,6 +29,7 @@ export const getERC20Balances = async (
   chainId: number,
   tokens: ERC20BalanceCall[]
 ) => {
+  console.log('here')
   const provider = createProvider(chainId);
   const contracts = tokens.map((token) => {
     return new ethers.Contract(token.tokenAddress, ERC20ABI, provider);

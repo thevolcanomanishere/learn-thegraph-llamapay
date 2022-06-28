@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
-import { utils } from "ethers";
 import React, { useEffect, useState } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
+import ChainContext, { IChainContext } from "../../utils/ChainContext";
 
 const GET_CONTRACTS = gql`
   {
@@ -87,7 +87,7 @@ const chainIds = [1, 137];
 
 const ContractsList: React.FunctionComponent = () => {
   const { loading, error, data } = useQuery(GET_CONTRACTS);
-  const [chainId, setChainId] = useState(1);
+  const { chainId, setChainId } = React.useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const [balances, setBalances] = useState<string[]>();
   const [streams, setStreams] =
@@ -112,7 +112,7 @@ const ContractsList: React.FunctionComponent = () => {
           };
         });
       const getBalances = async () => {
-        const balances = await getERC20Balances(1, tokens);
+        const balances = await getERC20Balances(chainId, tokens);
         setBalances(balances);
       };
 
@@ -122,7 +122,7 @@ const ContractsList: React.FunctionComponent = () => {
 
       getBalances();
     }
-  }, [data, contracts]);
+  }, [data, contracts, chainId]);
 
   return loading ? (
     <p>Loading...</p>
