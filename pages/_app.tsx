@@ -1,56 +1,64 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import ChainContext from "../utils/ChainContext";
 import { useEffect, useState } from "react";
 import { ChainId } from "eth-chains";
+import { createClient, Provider } from "urql";
+import build from "next/dist/build";
 
-  // TODO: make URI configurable
-const defaultClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/nemusonaneko/llamapay-mainnet",
-  cache: new InMemoryCache(),
-});
+// TODO: make URI configurable
+const buildClient = (url: string) => {
+  return createClient({
+    url: url,
+  });
+};
 
 const getLlamaPayGraphQLEndpoint = (chainId: number) => {
-  let root = "https://api.thegraph.com/subgraphs/name/nemusonaneko/llamapay-"
+  let root = "https://api.thegraph.com/subgraphs/name/nemusonaneko/llamapay-";
   switch (chainId) {
     case 1:
       root += "mainnet";
+      break;
     case 137:
       root += "polygon";
+      break;
     case ChainId.ArbitrumOne:
-      root += "arbitrum"
+      root += "arbitrum";
+      break;
     case ChainId.AvalancheMainnet:
-      root += "avalanche-mainnet"
+      root += "avalanche-mainnet";
+      break;
     case ChainId.FantomOpera:
-      root += "fantom"
+      root += "fantom";
+      break;
     case ChainId.OptimisticEthereum:
-      root += "optimism"
+      root += "optimism";
+      break;
     case ChainId.XDAIChain:
-      root += "xdai"
+      root += "xdai";
       break;
   }
   return root;
-}
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [chainId, setChainId] = useState(1)
-  const [apolloClient, setApolloClient] = useState(defaultClient);
-  
+  const [chainId, setChainId] = useState(1);
+  const [client, setClient] = useState(
+    buildClient(getLlamaPayGraphQLEndpoint(1))
+  );
+
   useEffect(() => {
-    const client = new ApolloClient({
-      uri: getLlamaPayGraphQLEndpoint(chainId),
-      cache: new InMemoryCache(),
-    });
-    setApolloClient(client);
-  }, [chainId])
+    console.log("here");
+    const url = getLlamaPayGraphQLEndpoint(chainId);
+    setClient(buildClient(url));
+  }, [chainId]);
 
   return (
-    <ApolloProvider client={apolloClient}>
-      <ChainContext.Provider value={{chainId, setChainId}}>
+    <Provider value={client}>
+      <ChainContext.Provider value={{ chainId, setChainId }}>
         <Component {...pageProps} />
       </ChainContext.Provider>
-    </ApolloProvider>
+    </Provider>
   );
 }
 
