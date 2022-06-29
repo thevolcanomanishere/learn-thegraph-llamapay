@@ -48,7 +48,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 
   useEffect(() => {
-    console.log("here");
     const url = getLlamaPayGraphQLEndpoint(chainId);
     setClient(buildClient(url));
   }, [chainId]);
