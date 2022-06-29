@@ -1,5 +1,5 @@
 import { providers } from "@0xsequence/multicall";
-import { ChainId, ChainName } from "eth-chains";
+import { ChainId } from "eth-chains";
 import { ethers, utils, providers as ethersProviders } from "ethers";
 import ERC20ABI from "../Abis/ERC20.json";
 
