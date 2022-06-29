@@ -23,7 +23,7 @@ const NetworkSelector = () => {
   };
 
   return (
-    <div className="ml-3">
+    <div className="ml-3 mb-2">
       <Button.Group outline={true}>{createButtons()}</Button.Group>
     </div>
   );
