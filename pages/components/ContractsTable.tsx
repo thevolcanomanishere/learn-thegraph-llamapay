@@ -167,17 +167,19 @@ const ContractsTable: FC = () => {
     <>
       <Table striped={true}>
         <Table.Head>
-          {headers.map((header, index) => (
-            <Table.HeadCell key={index}>{header}</Table.HeadCell>
-          ))}
-        </Table.Head>
-        <Table.Body className="divide-y">
-          {fetching ? (
-            <Spinner size="xl" />
-          ) : (
-            data &&
+          {data &&
             contracts &&
             balances &&
+            streams &&
+            headers.map((header, index) => (
+              <Table.HeadCell key={index}>{header}</Table.HeadCell>
+            ))}
+        </Table.Head>
+        <Table.Body className="divide-y">
+          {data &&
+            contracts &&
+            balances &&
+            streams &&
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
@@ -202,8 +204,7 @@ const ContractsTable: FC = () => {
                   {balances[index]} {contract.token.symbol}
                 </Table.Cell>
               </Table.Row>
-            ))
-          )}
+            ))}
         </Table.Body>
       </Table>
     </>
