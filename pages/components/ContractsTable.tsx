@@ -6,6 +6,9 @@ import { FC } from "react";
 import ChainContext, { IChainContext } from "../../utils/ChainContext";
 import { useEffect } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
+import ColorHash from "color-hash";
+
+const colorHash = new ColorHash();
 
 interface Contract {
   address: string;
@@ -59,7 +62,7 @@ const ContractsTable: FC = () => {
     query: GET_CONTRACTS,
   });
   const { data, fetching, error } = result;
-  const { chainId, setChainId } = useContext(ChainContext) as IChainContext;
+  const { chainId } = useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const [balances, setBalances] = useState<string[]>();
   const [streams, setStreams] =
@@ -156,8 +159,20 @@ const ContractsTable: FC = () => {
           balances &&
           contracts.map((contract, index) => (
             <Table.Row key={index}>
-              <Table.Cell>{shortenAddress(contract.address)}</Table.Cell>
-              <Table.Cell>
+              <Table.Cell
+                className={`text-[${colorHash.hex(contract.address)}]`}
+              >
+                {shortenAddress(contract.address)}
+              </Table.Cell>
+              <Table.Cell className="flex">
+                <div
+                  style={{
+                    backgroundColor: colorHash.hex(
+                      contract.streams[0]?.payer.address
+                    ),
+                  }}
+                  className={`h-[20px] w-[20px] mr-2 rounded`}
+                />
                 {shortenAddress(contract.streams[0]?.payer.address)}
               </Table.Cell>
               <Table.Cell>{calculateActivePayees(contract)}</Table.Cell>
