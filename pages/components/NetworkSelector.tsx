@@ -17,7 +17,10 @@ const NetworkSelector = () => {
           key={network.chainId}
           onClick={() => setChainId(network.chainId)}
         >
-          {network.name}
+          <div className="flex gap-2">
+            {network.logo}
+            {network.name}
+          </div>
         </Button>
       );
     });
