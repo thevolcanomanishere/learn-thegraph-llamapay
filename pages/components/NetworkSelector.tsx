@@ -12,6 +12,7 @@ const NetworkSelector = () => {
     return networks.map((network) => {
       return (
         <Button
+          color="gray"
           outline={chainId === network.chainId}
           key={network.chainId}
           onClick={() => setChainId(network.chainId)}
