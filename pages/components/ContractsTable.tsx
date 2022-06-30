@@ -1,5 +1,5 @@
 import { Spinner, Table } from "flowbite-react";
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo, useCallback } from "react";
 import { useQuery, gql } from "urql";
 import { FC } from "react";
 import ChainContext, { IChainContext } from "../../utils/ChainContext";
@@ -64,12 +64,36 @@ const ContractsTable: FC = () => {
   const { data, fetching, error } = result;
   const { chainId } = useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
+  const tokens: ERC20BalanceCall[] | undefined = useMemo(() => {
+    if (!contracts) return;
+    return contracts.map((token: any) => {
+      return {
+        address: token.address,
+        tokenAddress: token.token.address,
+        decimals: token.token.decimals,
+      };
+    });
+  }, [contracts]);
   const [balances, setBalances] = useState<string[]>();
-  const [streams, setStreams] =
-    useState<{ payee: { address: string }; amountPerSec: string }[][]>();
-  const [totalAmountPerSecond, setTotalAmountPerSecond] = useState<string[]>(
-    []
-  );
+  const streams = useMemo(() => {
+    if (!contracts) return;
+    return contracts.map((contract: any) => {
+      return contract.streams;
+    });
+  }, [contracts]);
+
+  const totalAmountPerSecond = useMemo(() => {
+    if (!contracts) return;
+    return contracts.map((contract) => {
+      const streamsAsNumbers = contract.streams.map((stream) => {
+        if (!stream.active) return 0;
+        if (stream.paused) return 0;
+        return parseInt(stream.amountPerSec);
+      });
+      const reduced = streamsAsNumbers.reduce((a, b) => a + b, 0);
+      return `${(reduced / 1e20).toString()} ${contract.token.symbol}`;
+    });
+  }, [contracts]);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -86,18 +110,6 @@ const ContractsTable: FC = () => {
     return (
       address.substring(0, 6) + "..." + address.substring(address.length - 4)
     );
-  };
-
-  const getTotalAmountPerSecond = (contracts: Contract[]) => {
-    return contracts.map((contract) => {
-      const streamsAsNumbers = contract.streams.map((stream) => {
-        if (!stream.active) return 0;
-        if (stream.paused) return 0;
-        return parseInt(stream.amountPerSec);
-      });
-      const reduced = streamsAsNumbers.reduce((a, b) => a + b, 0);
-      return `${(reduced / 1e20).toString()} ${contract.token.symbol}`;
-    });
   };
 
   const createExplorerLink = (address: string, chainId: number) => {
@@ -132,34 +144,18 @@ const ContractsTable: FC = () => {
   useEffect(() => {
     if (data) {
       const filteredContracts = data.llamaPayFactories[0].contracts;
-      // .map((contract: Contract) => {
-      //   return {
-      //     ...contract,
-      //     streams: contract.streams.filter(
-      //       (stream) => stream.active && !stream.paused
-      //     ),
-      //   };
-      // })
-      // .filter((contract: Contract) => contract.streams.length > 0);
       setContracts(filteredContracts);
-      setStreams(filteredContracts.map((c: any) => c.streams));
-      const tokens: ERC20BalanceCall[] = filteredContracts.map((token: any) => {
-        return {
-          address: token.address,
-          tokenAddress: token.token.address,
-          decimals: token.token.decimals,
-        };
-      });
-      const getBalances = async () => {
-        const balances = await getERC20Balances(chainId, tokens);
-        setBalances(balances);
-      };
-      const totalAmountPerSecond = getTotalAmountPerSecond(filteredContracts);
-      setTotalAmountPerSecond(totalAmountPerSecond);
-
-      getBalances();
     }
   }, [data, contracts, chainId]);
+
+  useEffect(() => {
+    if (tokens) {
+      (async () => {
+        const balances = await getERC20Balances(chainId, tokens);
+        if (balances) setBalances(balances);
+      })();
+    }
+  }, [tokens, chainId]);
 
   return !mounted ? (
     <div>Loading...</div>
@@ -200,9 +196,7 @@ const ContractsTable: FC = () => {
                 </Table.Cell>
                 <Table.Cell>{calculateActivePayees(contract)}</Table.Cell>
                 <Table.Cell>{totalAmountPerSecond[index]}</Table.Cell>
-                <Table.Cell>
-                  {balances[index]} {contract.token.symbol}
-                </Table.Cell>
+                <Table.Cell>{balances[index]}</Table.Cell>
               </Table.Row>
             ))}
         </Table.Body>
