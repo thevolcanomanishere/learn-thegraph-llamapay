@@ -25,8 +25,17 @@ const createProvider = (chainId: number) => {
     case ChainId.FantomOpera:
       apiUrl = "https://rpc.ftm.tools";
       break;
-    default:
+    case ChainId.ArbitrumOne:
+      apiUrl = "https://rpc.ankr.com/arbitrum";
       break;
+    case ChainId.OptimisticEthereum:
+      apiUrl = "https://mainnet.optimism.io";
+      break;
+    case ChainId.XDAIChain:
+      apiUrl = "https://rpc.xdaichain.com/ ";
+      break;
+    default:
+      console.error("Unknown chainId:", chainId);
   }
   return new providers.MulticallProvider(
     new ethersProviders.JsonRpcProvider(apiUrl)
