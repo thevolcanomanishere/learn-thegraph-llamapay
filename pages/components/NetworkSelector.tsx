@@ -10,10 +10,11 @@ const NetworkSelector = () => {
 
   const createButtons = () => {
     return networks.map((network) => {
+      const active = network.chainId != chainId ? "gray" : "success";
       return (
         <Button
-          color="gray"
-          outline={chainId === network.chainId}
+          // color={chainId === network.chainId ? "gray" : "blue"}
+          color={active}
           key={network.chainId}
           onClick={() => setChainId(network.chainId)}
         >
