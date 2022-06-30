@@ -175,6 +175,7 @@ const ContractsTable: FC = () => {
           {data &&
             contracts &&
             balances &&
+            totalAmountPerSecond &&
             streams &&
             contracts.map((contract, index) => (
               <Table.Row key={index}>
