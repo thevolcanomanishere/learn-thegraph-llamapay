@@ -131,10 +131,7 @@ const ContractsTable: FC = () => {
     "Tokens Left",
   ];
 
-  const openAddressInNewTab = (address: string) => {
-    const url = createExplorerLink(address, chainId);
-    window.open(url, "_blank");
-  };
+  const openUrlInNewTab = (url: string) => window.open(url, "_blank");
 
   const getBackgroundColor = (address: string) => {
     if (!address) return "black";
@@ -180,11 +177,25 @@ const ContractsTable: FC = () => {
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
-                  onClick={() => openAddressInNewTab(contract.address)}
+                  onClick={() =>
+                    openUrlInNewTab(
+                      createExplorerLink(contract.address, chainId)
+                    )
+                  }
                 >
                   {shortenAddress(contract.address)}
                 </Table.Cell>
-                <Table.Cell className="flex">
+                <Table.Cell
+                  className="flex"
+                  onClick={() =>
+                    openUrlInNewTab(
+                      createLinkToLlamaPay(
+                        contract.streams[0]?.payer.address,
+                        chainId
+                      )
+                    )
+                  }
+                >
                   <div
                     style={{
                       backgroundColor: getBackgroundColor(
