@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
 import ColorHash from "color-hash";
 import { networks } from "../../utils/Networks";
+import { getPriceOfTokens } from "../../utils/GetPrice";
 
 const colorHash = new ColorHash();
 
@@ -74,6 +75,7 @@ const ContractsTable: FC = () => {
       };
     });
   }, [contracts]);
+  const [tokenPrices, setTokenPrices] = useState<any>();
   const [balances, setBalances] = useState<string[]>();
   const streams = useMemo(() => {
     if (!contracts) return;
@@ -138,6 +140,13 @@ const ContractsTable: FC = () => {
     return colorHash.hex(address);
   };
 
+  const calculateTotalValue = (totalTokens: string, tokenAddress: string) => {
+    if (!Object.hasOwn(tokenPrices, tokenAddress)) return "No $ value";
+    const totalNumber = parseFloat(totalTokens);
+    const usdValue = parseFloat(tokenPrices[tokenAddress].usd);
+    return `$${(totalNumber * usdValue).toFixed(2)}`;
+  };
+
   useEffect(() => {
     if (data) {
       const filteredContracts = data.llamaPayFactories[0].contracts
@@ -161,6 +170,14 @@ const ContractsTable: FC = () => {
       (async () => {
         const balances = await getERC20Balances(chainId, tokens);
         if (balances) setBalances(balances);
+        const chainName = networks.find(
+          (network) => network.chainId === chainId
+        )?.name;
+        if (chainName) {
+          const tokenAddresses = tokens.map((token) => token.tokenAddress);
+          const tokenPrices = await getPriceOfTokens(tokenAddresses, chainName);
+          setTokenPrices(tokenPrices);
+        }
       })();
     }
   }, [tokens, chainId]);
@@ -188,6 +205,7 @@ const ContractsTable: FC = () => {
             balances &&
             totalAmountPerSecond &&
             streams &&
+            tokenPrices &&
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
@@ -222,7 +240,10 @@ const ContractsTable: FC = () => {
                 </Table.Cell>
                 <Table.Cell>{calculateActivePayees(contract)}</Table.Cell>
                 <Table.Cell>{totalAmountPerSecond[index]}</Table.Cell>
-                <Table.Cell>{balances[index]}</Table.Cell>
+                <Table.Cell>
+                  {balances[index]} |{" "}
+                  {calculateTotalValue(balances[index], contract.token.address)}
+                </Table.Cell>
               </Table.Row>
             ))}
         </Table.Body>

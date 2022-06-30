@@ -6,7 +6,7 @@ import NetworkSelector from "./components/NetworkSelector";
 
 const Home: NextPage = () => {
   return (
-    <div className="h-screen w-screen col-auto px-4 flex-row justify-items-center items-center">
+    <div className="h-screen w-screen col-auto px-4 flex-row gap-y-3 justify-items-center items-center">
       <Head>
         <link
           rel="icon"
