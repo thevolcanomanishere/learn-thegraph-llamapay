@@ -1,4 +1,7 @@
+import { Arbitrum } from "@thirdweb-dev/chain-icons";
 import React from "react";
+
+// Arbitrum icon. This is necessary because the browser will not load the icon
 
 const Header = () => {
   return (
@@ -10,6 +13,7 @@ const Header = () => {
         Click on the contract addresses to open the explorer for that chain.
       </p>
       <p>Click on the payer address to open LlamaPay.io for that address.</p>
+      <Arbitrum className="hidden" />
     </div>
   );
 };
