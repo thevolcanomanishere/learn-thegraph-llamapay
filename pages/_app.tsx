@@ -4,7 +4,6 @@ import ChainContext from "../utils/ChainContext";
 import { useEffect, useState } from "react";
 import { ChainId } from "eth-chains";
 import { createClient, Provider } from "urql";
-import build from "next/dist/build";
 
 // TODO: make URI configurable
 const buildClient = (url: string) => {
