@@ -166,11 +166,14 @@ const ContractsTable: FC = () => {
   }, [tokens, chainId]);
 
   return !mounted ? (
-    <div>Loading...</div>
+    <div className="flex">
+      <p>Loading...</p>
+      <Spinner className="xl" />
+    </div>
   ) : (
     <>
       <Table striped={true}>
-        <Table.Head>
+        <Table.Head className="bg-slate-200">
           {data &&
             contracts &&
             balances &&
