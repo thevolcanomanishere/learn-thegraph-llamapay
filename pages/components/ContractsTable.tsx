@@ -140,10 +140,21 @@ const ContractsTable: FC = () => {
 
   useEffect(() => {
     if (data) {
-      const filteredContracts = data.llamaPayFactories[0].contracts;
+      const filteredContracts = data.llamaPayFactories[0].contracts
+        .map((contract: Contract) => {
+          return {
+            ...contract,
+            streams: contract.streams.filter(
+              (stream) => stream.active && !stream.paused
+            ),
+          };
+        })
+        .filter((contract: Contract) => {
+          return contract.streams.length > 0;
+        });
       setContracts(filteredContracts);
     }
-  }, [data, contracts, chainId]);
+  }, [data, chainId]);
 
   useEffect(() => {
     if (tokens) {
