@@ -130,7 +130,9 @@ const ContractsTable: FC = () => {
     "Payer",
     "Payees",
     "Total amount p/s",
+    "$ p/s",
     "Tokens Left",
+    "Value",
   ];
 
   const openUrlInNewTab = (url: string) => window.open(url, "_blank");
@@ -145,6 +147,16 @@ const ContractsTable: FC = () => {
     const totalNumber = parseFloat(totalTokens);
     const usdValue = parseFloat(tokenPrices[tokenAddress].usd);
     return `$${(totalNumber * usdValue).toFixed(2)}`;
+  };
+
+  const calculateTotalValuePerSecond = (
+    tokensPerSecond: string,
+    tokenAddress: string
+  ) => {
+    if (!Object.hasOwn(tokenPrices, tokenAddress)) return "No $ value";
+    const totalNumber = parseFloat(tokensPerSecond);
+    const usdValue = parseFloat(tokenPrices[tokenAddress].usd);
+    return `$${(totalNumber * usdValue).toFixed(8)}`;
   };
 
   useEffect(() => {
@@ -170,9 +182,11 @@ const ContractsTable: FC = () => {
       (async () => {
         const balances = await getERC20Balances(chainId, tokens);
         if (balances) setBalances(balances);
-        const chainName = networks.find(
-          (network) => network.chainId === chainId
-        )?.name;
+        let chainInfo = networks.find((network) => network.chainId === chainId);
+        const chainName = chainInfo?.coinGecko
+          ? chainInfo.coinGecko
+          : chainInfo?.name;
+
         if (chainName) {
           const tokenAddresses = tokens.map((token) => token.tokenAddress);
           const tokenPrices = await getPriceOfTokens(tokenAddresses, chainName);
@@ -241,7 +255,13 @@ const ContractsTable: FC = () => {
                 <Table.Cell>{calculateActivePayees(contract)}</Table.Cell>
                 <Table.Cell>{totalAmountPerSecond[index]}</Table.Cell>
                 <Table.Cell>
-                  {balances[index]} |{" "}
+                  {calculateTotalValuePerSecond(
+                    totalAmountPerSecond[index],
+                    contract.token.address
+                  )}
+                </Table.Cell>
+                <Table.Cell>{balances[index]}</Table.Cell>
+                <Table.Cell>
                   {calculateTotalValue(balances[index], contract.token.address)}
                 </Table.Cell>
               </Table.Row>

@@ -9,7 +9,15 @@ import {
   Polygon,
 } from "@thirdweb-dev/chain-icons";
 
-export const networks = [
+type Network = {
+  name: string;
+  chainId: ChainId;
+  explorer: string;
+  logo: React.ReactElement;
+  coinGecko?: string; // Name override for coingecko api
+};
+
+export const networks: Network[] = [
   {
     name: "Ethereum",
     chainId: 1,
@@ -21,6 +29,7 @@ export const networks = [
     chainId: 137,
     explorer: "https://polygonscan.com/address/",
     logo: <Polygon className="h-5 " />,
+    coinGecko: "polygon-pos",
   },
   {
     name: "Avalanche",
@@ -39,6 +48,7 @@ export const networks = [
     chainId: 42161,
     explorer: "https://arbiscan.io/address/",
     logo: <Arbitrum className="h-5" />,
+    coinGecko: "arbitrum-one",
   },
   {
     name: "Optimism",
@@ -51,5 +61,6 @@ export const networks = [
     chainId: ChainId.XDAIChain,
     explorer: "https://blockscout.com/xdai/mainnet/address/",
     logo: <GnosisGno className="h-5 " />,
+    coinGecko: "xdai",
   },
 ];
