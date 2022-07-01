@@ -5,8 +5,8 @@ import React from "react";
 
 const Header = () => {
   return (
-    <div className="flex-row items-center h-32 mx-auto px-4">
-      <h1 className="w-auto my-6 text-4xl font-bold text-black border-white border-b-2">
+    <div className="flex-row items-center h-50 mx-auto px-4">
+      <h1 className="w-auto my-6 text-3xl font-bold text-black border-white border-b-2">
         🦙 LlamaPay Contracts
       </h1>
       <p>

@@ -28,7 +28,7 @@ const NetworkSelector = () => {
   };
 
   return (
-    <div className="ml-3 mb-2">
+    <div className="ml-3 mb-2 overflow-auto">
       <Button.Group outline={true}>{createButtons()}</Button.Group>
     </div>
   );
