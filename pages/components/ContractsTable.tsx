@@ -223,6 +223,7 @@ const ContractsTable: FC = () => {
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
+                  className="cursor-pointer"
                   onClick={() =>
                     openUrlInNewTab(
                       createExplorerLink(contract.address, chainId)
@@ -232,7 +233,7 @@ const ContractsTable: FC = () => {
                   {shortenAddress(contract.address)}
                 </Table.Cell>
                 <Table.Cell
-                  className="flex"
+                  className="flex cursor-pointer"
                   onClick={() =>
                     openUrlInNewTab(
                       createLinkToLlamaPay(
