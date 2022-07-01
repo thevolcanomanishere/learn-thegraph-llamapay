@@ -66,7 +66,7 @@ export const networks: Network[] = [
     coinGecko: "xdai",
   },
   {
-    name: "Binance Smart Chain",
+    name: "BSC",
     chainId: ChainId.BinanceSmartChainMainnet,
     explorer: "https://bscscan.io/address/",
     logo: <BinanceCoin className="h-5 " />,
