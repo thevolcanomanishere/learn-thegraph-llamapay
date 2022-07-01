@@ -1,4 +1,4 @@
-import { Spinner, Table } from "flowbite-react";
+import { Spinner, Table, Tooltip } from "flowbite-react";
 import { useState, useContext, useMemo, useCallback } from "react";
 import { useQuery, gql } from "urql";
 import { FC } from "react";
@@ -230,7 +230,9 @@ const ContractsTable: FC = () => {
                     )
                   }
                 >
-                  {shortenAddress(contract.address)}
+                  <Tooltip content={contract.address}>
+                    {shortenAddress(contract.address)}
+                  </Tooltip>
                 </Table.Cell>
                 <Table.Cell
                   className="flex cursor-pointer"
@@ -251,7 +253,9 @@ const ContractsTable: FC = () => {
                     }}
                     className={`h-[20px] w-[20px] mr-2 rounded`}
                   />
-                  {shortenAddress(contract.streams[0]?.payer.address)}
+                  <Tooltip content={contract.streams[0]?.payer.address}>
+                    {shortenAddress(contract.streams[0]?.payer.address)}
+                  </Tooltip>
                 </Table.Cell>
                 <Table.Cell>{calculateActivePayees(contract)}</Table.Cell>
                 <Table.Cell>{totalAmountPerSecond[index]}</Table.Cell>
