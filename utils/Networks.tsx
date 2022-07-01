@@ -2,6 +2,7 @@ import { ChainId } from "eth-chains";
 import {
   Arbitrum,
   Avalanche,
+  BinanceCoin,
   Ethereum,
   Fantom,
   GnosisGno,
@@ -63,5 +64,12 @@ export const networks: Network[] = [
     explorer: "https://blockscout.com/xdai/mainnet/address/",
     logo: <GnosisGno className="h-5 " />,
     coinGecko: "xdai",
+  },
+  {
+    name: "Binance Smart Chain",
+    chainId: ChainId.BinanceSmartChainMainnet,
+    explorer: "https://bscscan.io/address/",
+    logo: <BinanceCoin className="h-5 " />,
+    coinGecko: "binance-smart-chain",
   },
 ];

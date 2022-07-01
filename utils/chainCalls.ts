@@ -34,6 +34,9 @@ const createProvider = (chainId: number) => {
     case ChainId.XDAIChain:
       apiUrl = "https://rpc.xdaichain.com/ ";
       break;
+    case ChainId.BinanceSmartChainMainnet:
+      apiUrl = "https://bsc-dataseed.binance.org/";
+      break;
     default:
       console.error("Unknown chainId:", chainId);
   }

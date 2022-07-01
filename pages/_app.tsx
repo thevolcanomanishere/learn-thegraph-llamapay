@@ -36,6 +36,9 @@ const getLlamaPayGraphQLEndpoint = (chainId: number) => {
     case ChainId.XDAIChain:
       root += "xdai";
       break;
+    case ChainId.BinanceSmartChainMainnet:
+      root += "bsc";
+      break;
   }
   return root;
 };
