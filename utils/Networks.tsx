@@ -55,6 +55,7 @@ export const networks: Network[] = [
     chainId: ChainId.OptimisticEthereum,
     explorer: "https://optimistic.etherscan.io/address/",
     logo: <Optimism className="h-5 " />,
+    coinGecko: "optimistic-ethereum",
   },
   {
     name: "xDai/Gnosis",
