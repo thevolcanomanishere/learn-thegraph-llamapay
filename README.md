@@ -8,4 +8,4 @@ Why? LlamaPay doesn't allow you to browse the different contracts that are deplo
 
 Deployed here -> [https://learn-thegraph-llamapay.vercel.app/](https://learn-thegraph-llamapay.vercel.app/)
 
-React, Nextjs, ApolloClient, GraphQl, Ethers, 0xSequence/multicall
+React, Nextjs, urql, GraphQl, Ethers, 0xSequence/multicall
