@@ -1,10 +1,10 @@
 import { Spinner, Table, Tooltip } from "flowbite-react";
-import { useState, useContext, useMemo, useCallback } from "react";
+import { useState, useContext, useMemo } from "react";
 import { useQuery, gql } from "urql";
 import { FC } from "react";
 import ChainContext, { IChainContext } from "../../utils/ChainContext";
 import { useEffect } from "react";
-import { ERC20BalanceCall, getERC20Balances } from "../../utils/chainCalls";
+import { ERC20BalanceCall, getERC20Balances } from "../../utils/ChainCalls";
 import ColorHash from "color-hash";
 import { networks } from "../../utils/Networks";
 import { getPriceOfTokens } from "../../utils/GetPrice";
