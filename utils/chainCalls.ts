@@ -1,7 +1,7 @@
 import { providers } from "@0xsequence/multicall";
-import { ChainId } from "eth-chains";
 import { ethers, utils, providers as ethersProviders } from "ethers";
 import ERC20ABI from "../Abis/ERC20.json";
+import { getRPCEndpoint } from "./Networks";
 
 export type ERC20BalanceCall = {
   address: string;
@@ -10,38 +10,9 @@ export type ERC20BalanceCall = {
 };
 
 const createProvider = (chainId: number) => {
-  let apiUrl;
-
-  switch (chainId) {
-    case 1:
-      apiUrl = "https://cloudflare-eth.com/";
-      break;
-    case 137:
-      apiUrl = "https://polygon-rpc.com/";
-      break;
-    case ChainId.AvalancheMainnet:
-      apiUrl = "https://api.avax.network/ext/bc/C/rpc";
-      break;
-    case ChainId.FantomOpera:
-      apiUrl = "https://rpc.ftm.tools";
-      break;
-    case ChainId.ArbitrumOne:
-      apiUrl = "https://rpc.ankr.com/arbitrum";
-      break;
-    case ChainId.OptimisticEthereum:
-      apiUrl = "https://mainnet.optimism.io";
-      break;
-    case ChainId.XDAIChain:
-      apiUrl = "https://rpc.xdaichain.com/ ";
-      break;
-    case ChainId.BinanceSmartChainMainnet:
-      apiUrl = "https://bsc-dataseed.binance.org/";
-      break;
-    default:
-      console.error("Unknown chainId:", chainId);
-  }
+  const rpc = getRPCEndpoint(chainId);
   return new providers.MulticallProvider(
-    new ethersProviders.JsonRpcProvider(apiUrl)
+    new ethersProviders.JsonRpcProvider(rpc)
   );
 };
 
@@ -65,6 +36,6 @@ export const getERC20Balances = async (
       return utils.formatUnits(result, tokens[index].decimals);
     });
   } catch (error) {
-    console.log(error);
+    console.log("Error getting ERC20 balance: " + error);
   }
 };

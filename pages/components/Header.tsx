@@ -12,7 +12,9 @@ const Header = () => {
       <p>
         Click on the contract addresses to open the explorer for that chain.
       </p>
-      <p>Click on the payer address to open LlamaPay.io for that address.</p>
+      <p className="pb-5">
+        Click on the payer address to open LlamaPay.io for that address.
+      </p>
       <Arbitrum className="hidden" />
     </div>
   );
