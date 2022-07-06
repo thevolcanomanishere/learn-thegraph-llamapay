@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { createClient, Provider } from "urql";
 import { getGraphQLEndpoint } from "../utils/Networks";
 
-// TODO: make URI configurable
 const buildClient = (url: string) => {
   return createClient({
     url: url,
