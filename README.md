@@ -13,6 +13,7 @@ React, Nextjs, urql, GraphQl, Ethers, 0xSequence/multicall
 ## TODO
 
 - [ ] Move network requests to api route
+- [ ] Make large numbers more readable with thousands seperators
 - [ ] Make styling less shit
 - [ ] Add sablier finance page
 - [ ] Add overall cross-chain network value streaming total
