@@ -1,8 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import ContractsTable from "./components/ContractsTable";
+import LlamaContractsTable from "./components/LlamaContractsTable";
 import Header from "./components/Header";
 import NetworkSelector from "./components/NetworkSelector";
+import ProtocolTabs from "./components/ProtocolTabs";
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +16,8 @@ const Home: NextPage = () => {
       </Head>
       <Header />
       <NetworkSelector />
-      <ContractsTable />
+      <ProtocolTabs />
+      {/* <LlamaContractsTable /> */}
     </div>
   );
 };

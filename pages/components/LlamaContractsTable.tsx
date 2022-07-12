@@ -58,7 +58,7 @@ const GET_CONTRACTS = gql`
   }
 `;
 
-const ContractsTable: FC = () => {
+const LlamaContractsTable: FC = () => {
   const [result, reexecuteQuery] = useQuery({
     query: GET_CONTRACTS,
   });
@@ -277,4 +277,4 @@ const ContractsTable: FC = () => {
   );
 };
 
-export default ContractsTable;
+export default LlamaContractsTable;

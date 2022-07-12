@@ -1,4 +1,4 @@
-import { ChainId } from "eth-chains";
+import { Chain, ChainId } from "eth-chains";
 import {
   Arbitrum,
   Avalanche,
@@ -9,62 +9,61 @@ import {
   Optimism,
   Polygon,
 } from "@thirdweb-dev/chain-icons";
+import { ProtocolEnum } from "./ProtocolContext";
 
-type Network = {
-  name: string;
-  chainId: ChainId;
-  explorer: string;
-  logo: React.ReactElement;
-  coinGecko?: string; // Name override for coingecko api
-  rpc: string;
-  graphQL: string;
-};
-
-const graphQLRoot =
+const llamaPayGraphQLRoot =
   "https://api.thegraph.com/subgraphs/name/nemusonaneko/llamapay-";
 
-export const networks: Network[] = [
+const sablierFinaceGraphQLRoot =
+  "https://api.thegraph.com/subgraphs/name/sablierhq/sablier";
+
+export const networks = [
   {
     name: "Ethereum",
-    chainId: 1,
+    chainId: ChainId.EthereumMainnet,
     explorer: "https://etherscan.io/address/",
     logo: <Ethereum className="h-5 " />,
     rpc: "https://cloudflare-eth.com/",
-    graphQL: graphQLRoot + "mainnet",
+    llamaPayGraph: llamaPayGraphQLRoot + "mainnet",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot,
   },
   {
     name: "Polygon",
-    chainId: 137,
+    chainId: ChainId.PolygonMainnet,
     explorer: "https://polygonscan.com/address/",
     logo: <Polygon className="h-5 " />,
     coinGecko: "polygon-pos",
     rpc: "https://polygon-rpc.com/",
-    graphQL: graphQLRoot + "polygon",
+    llamaPayGraph: llamaPayGraphQLRoot + "polygon",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot + "-matic",
   },
   {
     name: "Avalanche",
-    chainId: 43114,
+    chainId: ChainId.AvalancheMainnet,
     explorer: "https://snowtrace.io/address/",
     logo: <Avalanche className="h-5 " />,
     rpc: "https://api.avax.network/ext/bc/C/rpc",
-    graphQL: graphQLRoot + "avalanche-mainnet",
+    llamaPayGraph: llamaPayGraphQLRoot + "avalanche-mainnet",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot + "-avalanche",
   },
   {
     name: "Fantom",
-    chainId: 250,
+    chainId: ChainId.FantomOpera,
     explorer: "https://ftmscan.com/address/",
     logo: <Fantom className="h-5 " />,
     rpc: "https://rpc.ftm.tools",
-    graphQL: graphQLRoot + "fantom",
+    llamaPayGraph: llamaPayGraphQLRoot + "fantom",
+    sablierFinaceGraph: "No graph",
   },
   {
     name: "Arbritrum",
-    chainId: 42161,
+    chainId: ChainId.ArbitrumOne,
     explorer: "https://arbiscan.io/address/",
     logo: <Arbitrum className="h-5" />,
     coinGecko: "arbitrum-one",
     rpc: "https://rpc.ankr.com/arbitrum",
-    graphQL: graphQLRoot + "arbitrum",
+    llamaPayGraph: llamaPayGraphQLRoot + "arbitrum",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot + "-arbitrum",
   },
   {
     name: "Optimism",
@@ -73,7 +72,8 @@ export const networks: Network[] = [
     logo: <Optimism className="h-5 " />,
     coinGecko: "optimistic-ethereum",
     rpc: "https://mainnet.optimism.io",
-    graphQL: graphQLRoot + "optimism",
+    llamaPayGraph: llamaPayGraphQLRoot + "optimism",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot + "-optimism",
   },
   {
     name: "xDai/Gnosis",
@@ -82,7 +82,8 @@ export const networks: Network[] = [
     logo: <GnosisGno className="h-5 " />,
     coinGecko: "xdai",
     rpc: "https://rpc.xdaichain.com/",
-    graphQL: graphQLRoot + "xdai",
+    llamaPayGraph: llamaPayGraphQLRoot + "xdai",
+    sablierFinaceGraph: "No graph",
   },
   {
     name: "BSC",
@@ -91,16 +92,31 @@ export const networks: Network[] = [
     logo: <BinanceCoin className="h-5 " />,
     coinGecko: "binance-smart-chain",
     rpc: "https://bsc-dataseed.binance.org/",
-    graphQL: graphQLRoot + "bsc",
+    llamaPayGraph: llamaPayGraphQLRoot + "bsc",
+    sablierFinaceGraph: sablierFinaceGraphQLRoot + "-bsc",
   },
-];
+] as const;
 
-export const getGraphQLEndpoint = (chainId: ChainId) => {
-  const network = networks.find((n) => n.chainId === chainId);
-  if (!network) {
-    throw new Error(`No network found for chainId ${chainId}`);
+export const getGraphQLEndpoint = (
+  chainId: typeof networks[number]["chainId"],
+  protocol: ProtocolEnum
+) => {
+  const network = networks.find(
+    (n) => n.chainId === chainId
+  ) as typeof networks[number];
+
+  if (protocol === ProtocolEnum.LlamaPay) {
+    return network.llamaPayGraph;
   }
-  return network.graphQL;
+
+  if (
+    protocol === ProtocolEnum.Sablier &&
+    chainId !== ChainId.XDAIChain &&
+    chainId !== ChainId.FantomOpera
+  ) {
+    return network.sablierFinaceGraph;
+  }
+  return ""; // Make this not shit?
 };
 
 export const getRPCEndpoint = (chainId: ChainId) => {
