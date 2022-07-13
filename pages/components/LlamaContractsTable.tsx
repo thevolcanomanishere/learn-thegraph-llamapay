@@ -6,7 +6,7 @@ import ChainContext, { IChainContext } from "../../utils/ChainContext";
 import { useEffect } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/ChainCalls";
 import ColorHash from "color-hash";
-import { networks } from "../../utils/Networks";
+import { getRPCEndpoint, networks } from "../../utils/Networks";
 import { getPriceOfTokens } from "../../utils/GetPrice";
 
 const colorHash = new ColorHash();
@@ -63,7 +63,8 @@ const LlamaContractsTable: FC = () => {
     query: GET_CONTRACTS,
   });
   const { data, fetching, error } = result;
-  const { chainId } = useContext(ChainContext) as IChainContext;
+  // const [isLoading, setIsLoading] = useState(true);
+  const { chainId, setChainId } = useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const tokens: ERC20BalanceCall[] | undefined = useMemo(() => {
     if (!contracts) return;
@@ -196,30 +197,33 @@ const LlamaContractsTable: FC = () => {
     }
   }, [tokens, chainId]);
 
-  return !mounted ? (
-    <div className="flex">
+  const isLoading =
+    !data ||
+    !contracts ||
+    !balances ||
+    !tokenPrices ||
+    !streams ||
+    !totalAmountPerSecond ||
+    !tokens;
+
+  return isLoading ? (
+    <div className="flex gap-4">
       <p>Loading...</p>
-      <Spinner className="xl" />
+      <Spinner className="xl ml-2" />
+      <p>Using RPC: {getRPCEndpoint(chainId)}</p>
     </div>
   ) : (
     <>
+      <p className="mb-4 ml-2">Using RPC: {getRPCEndpoint(chainId)}</p>
       <Table striped={true}>
         <Table.Head className="bg-slate-200">
-          {data &&
-            contracts &&
-            balances &&
-            streams &&
+          {!isLoading &&
             headers.map((header, index) => (
               <Table.HeadCell key={index}>{header}</Table.HeadCell>
             ))}
         </Table.Head>
         <Table.Body className="divide-y">
-          {data &&
-            contracts &&
-            balances &&
-            totalAmountPerSecond &&
-            streams &&
-            tokenPrices &&
+          {!isLoading &&
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
