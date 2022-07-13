@@ -63,7 +63,6 @@ const LlamaContractsTable: FC = () => {
     query: GET_CONTRACTS,
   });
   const { data, fetching, error } = result;
-  // const [isLoading, setIsLoading] = useState(true);
   const { chainId, setChainId } = useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const tokens: ERC20BalanceCall[] | undefined = useMemo(() => {
@@ -97,11 +96,6 @@ const LlamaContractsTable: FC = () => {
       return `${(reduced / 1e20).toString()} ${contract.token.symbol}`;
     });
   }, [contracts]);
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const calculateActivePayees = (contract: Contract) => {
     return contract.streams.filter((stream) => stream.active && !stream.paused)
