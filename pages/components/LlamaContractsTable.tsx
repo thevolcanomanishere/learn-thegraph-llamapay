@@ -174,8 +174,10 @@ const LlamaContractsTable: FC = () => {
         const balances = await getERC20Balances(chainId, tokens);
         if (balances) setBalances(balances);
         let chainInfo = networks.find((network) => network.chainId === chainId);
+        // @ts-ignore
         const chainName = chainInfo?.coinGecko
-          ? chainInfo.coinGecko
+          ? // @ts-ignore
+            chainInfo.coinGecko
           : chainInfo?.name;
 
         if (chainName) {
