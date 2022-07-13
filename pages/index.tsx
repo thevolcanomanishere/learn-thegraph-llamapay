@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import LlamaContractsTable from "./components/LlamaContractsTable";
 import Header from "./components/Header";
 import NetworkSelector from "./components/NetworkSelector";
 import ProtocolTabs from "./components/ProtocolTabs";
@@ -16,7 +15,9 @@ const Home: NextPage = () => {
       </Head>
       <Header />
       <NetworkSelector />
-      <ProtocolTabs />
+      <div className="ml-3">
+        <ProtocolTabs />
+      </div>
       {/* <LlamaContractsTable /> */}
     </div>
   );

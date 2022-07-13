@@ -59,11 +59,11 @@ const GET_CONTRACTS = gql`
 `;
 
 const LlamaContractsTable: FC = () => {
-  const [result, reexecuteQuery] = useQuery({
+  const [result] = useQuery({
     query: GET_CONTRACTS,
   });
   const { data, fetching, error } = result;
-  const { chainId, setChainId } = useContext(ChainContext) as IChainContext;
+  const { chainId } = useContext(ChainContext) as IChainContext;
   const [contracts, setContracts] = useState<[Contract]>();
   const tokens: ERC20BalanceCall[] | undefined = useMemo(() => {
     if (!contracts) return;
@@ -77,12 +77,8 @@ const LlamaContractsTable: FC = () => {
   }, [contracts]);
   const [tokenPrices, setTokenPrices] = useState<any>();
   const [balances, setBalances] = useState<string[]>();
-  const streams = useMemo(() => {
-    if (!contracts) return;
-    return contracts.map((contract: any) => {
-      return contract.streams;
-    });
-  }, [contracts]);
+  const [isFetchingBalances, setIsFetchingBalances] = useState(true);
+  const [isFetchingPrices, setIsFetchingPrices] = useState(true);
 
   const totalAmountPerSecond = useMemo(() => {
     if (!contracts) return;
@@ -184,31 +180,37 @@ const LlamaContractsTable: FC = () => {
 
         if (chainName) {
           const tokenAddresses = tokens.map((token) => token.tokenAddress);
-          const tokenPrices = await getPriceOfTokens(tokenAddresses, chainName);
-          setTokenPrices(tokenPrices);
+          const tPrices = await getPriceOfTokens(tokenAddresses, chainName);
+          setTokenPrices(tPrices);
+          // pause for 500 ms
+          setTimeout(() => {
+            setIsFetchingPrices(false);
+            setIsFetchingBalances(false);
+          }, 500);
         }
       })();
     }
   }, [tokens, chainId]);
 
   const isLoading =
-    !data ||
+    isFetchingBalances ||
+    isFetchingPrices ||
+    fetching ||
     !contracts ||
     !balances ||
-    !tokenPrices ||
-    !streams ||
-    !totalAmountPerSecond ||
-    !tokens;
+    !totalAmountPerSecond;
+
+  console.log("isLoading :" + isLoading);
 
   return isLoading ? (
-    <div className="flex gap-4">
+    <div className="flex">
       <p>Loading...</p>
-      <Spinner className="xl ml-2" />
-      <p>Using RPC: {getRPCEndpoint(chainId)}</p>
+      <Spinner className="xl mr-3" />
+      <p className="pl-3">Using RPC: {getRPCEndpoint(chainId)}</p>
     </div>
   ) : (
     <>
-      <p className="mb-4 ml-2">Using RPC: {getRPCEndpoint(chainId)}</p>
+      <p className="mb-4 mx-2">Using RPC: {getRPCEndpoint(chainId)}</p>
       <Table striped={true}>
         <Table.Head className="bg-slate-200">
           {!isLoading &&

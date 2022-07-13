@@ -6,23 +6,28 @@ import SablierContractsTable from "./SablierContractsTable";
 
 const ProtocolTabs = () => {
   const { protocol, setProtocol } = React.useContext(ProtocolContext);
-  const handleTabClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-    //@ts-ignore
-    setProtocol(e.target.innerText);
 
+  const buttonStyle =
+    "bg-white p-2 rounded border-solid border-sky-500 active:bg-sky-500";
   return (
-    <Tabs.Group
-      aria-label="Tabs with underline"
-      style="underline"
-      onClick={(e) => handleTabClick(e)}
-    >
-      <Tabs.Item title="LlamaPay 🦙">
-        {protocol === ProtocolEnum.LlamaPay && <LlamaContractsTable />}
-      </Tabs.Item>
-      <Tabs.Item title="Sablier Finance">
-        {protocol === ProtocolEnum.Sablier && <SablierContractsTable />}
-      </Tabs.Item>
-    </Tabs.Group>
+    <div className="ml-4">
+      <div className="flex gap-1 my-5">
+        <button
+          onClick={() => setProtocol(ProtocolEnum.LlamaPay)}
+          className={buttonStyle}
+        >
+          Llama Pay 🦙
+        </button>
+        <button
+          // onClick={() => setProtocol(ProtocolEnum.Sablier)}
+          className={buttonStyle}
+        >
+          Sablier Finance (Coming Soon)
+        </button>
+      </div>
+      {protocol === ProtocolEnum.LlamaPay && <LlamaContractsTable />}
+      {protocol === ProtocolEnum.Sablier && <SablierContractsTable />}
+    </div>
   );
 };
 

@@ -5,7 +5,12 @@ const now = Math.round(+new Date() / 1000);
 
 const GET_STREAMS = gql`
   {
-    streams(first: 100, orderBy: stopTime, orderDirection: desc) {
+    streams(
+      first: 100
+      orderBy: stopTime
+      orderDirection: desc
+      where: { stopTime_gt: 0 }
+    ) {
       id
       ratePerSecond
       stopTime
