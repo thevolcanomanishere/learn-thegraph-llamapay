@@ -2,11 +2,13 @@ import { Button } from "flowbite-react";
 import React from "react";
 import ChainContext, { IChainContext } from "../../utils/ChainContext";
 import { networks } from "../../utils/Networks";
+import ProtocolContext, { IProtocolContext } from "../../utils/ProtocolContext";
 
 const NetworkSelector = () => {
   const { chainId, setChainId } = React.useContext(
     ChainContext
   ) as IChainContext;
+  const { protocol } = React.useContext(ProtocolContext) as IProtocolContext;
 
   const createButtons = () => {
     return networks.map((network) => {
@@ -28,7 +30,7 @@ const NetworkSelector = () => {
   };
 
   return (
-    <div className="ml-3 mb-2 overflow-auto">
+    <div className="ml-6 mb-2 overflow-auto">
       <Button.Group outline={true}>{createButtons()}</Button.Group>
     </div>
   );

@@ -6,7 +6,7 @@ import ChainContext, { IChainContext } from "../../utils/ChainContext";
 import { useEffect } from "react";
 import { ERC20BalanceCall, getERC20Balances } from "../../utils/ChainCalls";
 import ColorHash from "color-hash";
-import { networks } from "../../utils/Networks";
+import { getRPCEndpoint, networks } from "../../utils/Networks";
 import { getPriceOfTokens } from "../../utils/GetPrice";
 
 const colorHash = new ColorHash();
@@ -58,8 +58,8 @@ const GET_CONTRACTS = gql`
   }
 `;
 
-const ContractsTable: FC = () => {
-  const [result, reexecuteQuery] = useQuery({
+const LlamaContractsTable: FC = () => {
+  const [result] = useQuery({
     query: GET_CONTRACTS,
   });
   const { data, fetching, error } = result;
@@ -77,12 +77,8 @@ const ContractsTable: FC = () => {
   }, [contracts]);
   const [tokenPrices, setTokenPrices] = useState<any>();
   const [balances, setBalances] = useState<string[]>();
-  const streams = useMemo(() => {
-    if (!contracts) return;
-    return contracts.map((contract: any) => {
-      return contract.streams;
-    });
-  }, [contracts]);
+  const [isFetchingBalances, setIsFetchingBalances] = useState(true);
+  const [isFetchingPrices, setIsFetchingPrices] = useState(true);
 
   const totalAmountPerSecond = useMemo(() => {
     if (!contracts) return;
@@ -96,11 +92,6 @@ const ContractsTable: FC = () => {
       return `${(reduced / 1e20).toString()} ${contract.token.symbol}`;
     });
   }, [contracts]);
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const calculateActivePayees = (contract: Contract) => {
     return contract.streams.filter((stream) => stream.active && !stream.paused)
@@ -189,37 +180,46 @@ const ContractsTable: FC = () => {
 
         if (chainName) {
           const tokenAddresses = tokens.map((token) => token.tokenAddress);
-          const tokenPrices = await getPriceOfTokens(tokenAddresses, chainName);
-          setTokenPrices(tokenPrices);
+          const tPrices = await getPriceOfTokens(tokenAddresses, chainName);
+          setTokenPrices(tPrices);
+          // pause for 500 ms
+          setTimeout(() => {
+            setIsFetchingPrices(false);
+            setIsFetchingBalances(false);
+          }, 500);
         }
       })();
     }
   }, [tokens, chainId]);
 
-  return !mounted ? (
+  const isLoading =
+    isFetchingBalances ||
+    isFetchingPrices ||
+    fetching ||
+    !contracts ||
+    !balances ||
+    !totalAmountPerSecond;
+
+  console.log("isLoading :" + isLoading);
+
+  return isLoading ? (
     <div className="flex">
       <p>Loading...</p>
-      <Spinner className="xl" />
+      <Spinner className="xl mr-3" />
+      <p className="pl-3">Using RPC: {getRPCEndpoint(chainId)}</p>
     </div>
   ) : (
     <>
+      <p className="mb-4 mx-2">Using RPC: {getRPCEndpoint(chainId)}</p>
       <Table striped={true}>
         <Table.Head className="bg-slate-200">
-          {data &&
-            contracts &&
-            balances &&
-            streams &&
+          {!isLoading &&
             headers.map((header, index) => (
               <Table.HeadCell key={index}>{header}</Table.HeadCell>
             ))}
         </Table.Head>
         <Table.Body className="divide-y">
-          {data &&
-            contracts &&
-            balances &&
-            totalAmountPerSecond &&
-            streams &&
-            tokenPrices &&
+          {!isLoading &&
             contracts.map((contract, index) => (
               <Table.Row key={index}>
                 <Table.Cell
@@ -277,4 +277,4 @@ const ContractsTable: FC = () => {
   );
 };
 
-export default ContractsTable;
+export default LlamaContractsTable;
